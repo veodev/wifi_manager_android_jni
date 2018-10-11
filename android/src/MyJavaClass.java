@@ -42,12 +42,14 @@ public class MyJavaClass
         return wifiManager.isWifiEnabled();
     }
 
-    private static void scanWifi(Context context) {
+    private static ArrayList<String> scanWifi(Context context) {
         WifiManager wifiManager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
         wifiManager.startScan();
         List<ScanResult> results = wifiManager.getScanResults();
+        ArrayList<String> ssids = new ArrayList<String>();
         for (ScanResult scanResult : results) {
-             System.out.println(scanResult.SSID + " - " + scanResult.capabilities);
+            ssids.add(scanResult.SSID);
         }
+        return ssids;
     }
 }
