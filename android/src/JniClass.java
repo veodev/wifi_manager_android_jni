@@ -46,12 +46,21 @@ public class JniClass
         System.out.println(ssid);
         WifiConfiguration wifiConfig = new WifiConfiguration();
         wifiConfig.SSID = String.format("\"%s\"", ssid);
+        wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
         WifiManager wifiManager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
         int netId = wifiManager.addNetwork(wifiConfig);
         System.out.println("============ ID:");
         System.out.println(netId);
-        wifiManager.disconnect();
-        wifiManager.enableNetwork(netId, true);
-        wifiManager.reconnect();
+        List<WifiConfiguration> listConfigs = wifiManager.getConfiguredNetworks();
+
+        for (WifiConfiguration conf: listConfigs) {
+            if (conf.SSID != null && conf.SSID.equals("\"" + ssid + "\"")) {
+                wifiManager.disconnect();
+                wifiManager.enableNetwork(netId, true);
+                wifiManager.reconnect();
+                break;
+            }
+        }
+
     }
 }
