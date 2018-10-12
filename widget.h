@@ -23,6 +23,8 @@ private slots:
     void on_disableWifiButton_released();
     void onCheckConnectionTimerTimeOut();
 
+    void on_connectWifiButton_released();
+
 private:
     Ui::Widget* ui;
     QTimer _connectionCheckTimer;

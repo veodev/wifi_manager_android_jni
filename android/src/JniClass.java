@@ -1,29 +1,12 @@
-//package com.kdab.training;
-
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.net.wifi.WifiConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyJavaClass
-{
-    private int size = 0;
-    private ArrayAdapter adapter;
-    private List<ScanResult> results;
-    private ArrayList<String> arrayList = new ArrayList<String>();
-
-    // this method will be called from C/C++
-
+public class JniClass
+{               
     public static boolean enableWifi(Context context)
     {
         WifiManager wifiManager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
@@ -42,14 +25,33 @@ public class MyJavaClass
         return wifiManager.isWifiEnabled();
     }
 
-    private static ArrayList<String> scanWifi(Context context) {
+    private static String scanWifi(Context context) {
         WifiManager wifiManager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
         wifiManager.startScan();
-        List<ScanResult> results = wifiManager.getScanResults();
-        ArrayList<String> ssids = new ArrayList<String>();
-        for (ScanResult scanResult : results) {
-            ssids.add(scanResult.SSID);
+        ArrayList<String> networkSsids = new ArrayList<String>();
+        String result = new String();
+        for (ScanResult scanResult : wifiManager.getScanResults()) {
+            networkSsids.add(scanResult.SSID);
+
         }
-        return ssids;
+        for (String item : networkSsids) {
+            result = result.concat(item).concat("///");
+            System.out.println(item);
+        }
+        System.out.println(result);
+        return result;
+    }
+
+    private static void connectToSsid(Context context, String ssid) {        
+        System.out.println(ssid);
+        WifiConfiguration wifiConfig = new WifiConfiguration();
+        wifiConfig.SSID = String.format("\"%s\"", ssid);
+        WifiManager wifiManager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
+        int netId = wifiManager.addNetwork(wifiConfig);
+        System.out.println("============ ID:");
+        System.out.println(netId);
+        wifiManager.disconnect();
+        wifiManager.enableNetwork(netId, true);
+        wifiManager.reconnect();
     }
 }
